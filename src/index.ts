@@ -1,11 +1,11 @@
 import { createServer } from 'http';
-import { error, PATH_ERROR } from './controllers/response';
-import isValidUrl from './utils/isValidUrl';
-import isValidUrlById from './utils/isValidUrlById';
-import get from './controllers/get';
-import put from './controllers/put';
-import post from './controllers/post';
-import remove from './controllers/remove';
+import { error, PATH_ERROR } from './controllers/response.js';
+import isValidUrl from './utils/isValidUrl.js';
+import isValidUrlById from './utils/isValidUrlById.js';
+import get from './controllers/get.js';
+import put from './controllers/put.js';
+import post from './controllers/post.js';
+import remove from './controllers/remove.js';
 import 'dotenv/config';
 
 const server = createServer((req, res) => {

@@ -6,7 +6,8 @@
     /* Modules */
     "module": "ESNext",
     "rootDir": "src",
-    "moduleResolution": "node",
+    "outDir": "./dist",
+    "moduleResolution": "Node",
     "resolveJsonModule": true,
 
     /* JavaScript Support */
@@ -15,7 +16,6 @@
 
     /* Emit */
     "sourceMap": true,
-    "outDir": "./dist",
     "removeComments": true,
     "downlevelIteration": true,
     "newLine": "lf",

@@ -1,9 +1,9 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { v4 as uuid } from 'uuid';
-import { success, error, BODY_ERROR, SERVER_ERROR } from './response';
-import { isValidBody } from '../utils/isValidBody';
+import { success, error, BODY_ERROR, SERVER_ERROR } from './response.js';
+import { isValidBody } from '../utils/isValidBody.js';
 import { UserBodyType } from '../../types';
-import users from '../db';
+import users from '../db/index.js';
 
 const addUser = (data: string) => {
   const body = JSON.parse(data) as UserBodyType;

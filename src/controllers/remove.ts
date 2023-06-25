@@ -1,7 +1,7 @@
 import { ServerResponse } from 'http';
 import { validate } from 'uuid';
-import { success, error, USER_ERROR, USER_ID_ERROR } from './response';
-import users from '../db';
+import { success, error, USER_ERROR, USER_ID_ERROR } from './response.js';
+import users from '../db/index.js';
 
 const remove = (res: ServerResponse, url: string) => {
   const id = url.split('/').at(-1);
