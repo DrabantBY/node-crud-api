@@ -1,5 +1,5 @@
 import { ServerResponse } from 'http';
-import { ErrorType, SuccessType } from '../../types';
+import { ErrorType, UserType } from '../../types';
 
 const RES_HEADER = { 'Content-Type': 'application/json' };
 
@@ -28,7 +28,11 @@ export const SERVER_ERROR = {
   message: 'an internal server error has occurred',
 };
 
-export const success = ({ res, code, data }: SuccessType) => {
+export const success = (
+  res: ServerResponse,
+  code: number,
+  data?: UserType | UserType[]
+) => {
   res.writeHead(code, RES_HEADER);
   if (data) {
     res.end(JSON.stringify(data));

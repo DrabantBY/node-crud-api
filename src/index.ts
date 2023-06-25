@@ -4,7 +4,7 @@ import isValidUrl from './utils/isValidUrl';
 import isValidUrlById from './utils/isValidUrlById';
 
 import get from './controllers/get';
-import addUser from './controllers/post';
+import post from './controllers/post';
 import { error, PATH_ERROR } from './controllers/response';
 
 import 'dotenv/config';
@@ -22,7 +22,7 @@ const server = createServer((req, res) => {
       break;
 
     case method === 'POST' && isValidUrl(url!):
-      addUser(req, res);
+      post(req, res);
       break;
 
     // case method === 'PUT' && isValidUrlById(url!):
