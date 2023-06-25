@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { success, error, BODY_ERROR, SERVER_ERROR } from './response.js';
 import { isValidBody } from '../utils/isValidBody.js';
 import { UserBodyType } from '../../types';
-import users from '../db/index.js';
+import users from '../db.js';
 
 const addUser = (data: string) => {
   const body = JSON.parse(data) as UserBodyType;

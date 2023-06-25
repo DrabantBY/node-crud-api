@@ -10,7 +10,7 @@ import {
 } from './response.js';
 import { isValidBody } from '../utils/isValidBody.js';
 import { UserBodyType } from '../../types';
-import users from '../db/index.js';
+import users from '../db.js';
 
 const changeUser = (id: string, data: string) => {
   const body = JSON.parse(data) as UserBodyType;
