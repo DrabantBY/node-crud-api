@@ -15,7 +15,7 @@ const isValidHobbies = ([key, value]: [BodyKeyType, BodyValType]) =>
   (value.length === 0 || value.every((val) => typeof val === 'string'));
 
 const isValidSize = (method: 'put' | 'post', body: Partial<UserBodyType>) => {
-  const { size } = new Set(Object.keys(body));
+  const size = Object.keys(body).length;
 
   return method === 'put' ? size >= 1 && size <= 3 : size === 3;
 };

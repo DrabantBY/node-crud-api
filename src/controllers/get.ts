@@ -1,8 +1,7 @@
 import { ServerResponse } from 'http';
 import { validate } from 'uuid';
-
-import users from '../db';
 import { error, success, USER_ID_ERROR, USER_ERROR } from './response';
+import users from '../db';
 
 const handleUrl = (res: ServerResponse, url: string) => {
   const id = url.split('/').at(-1);

@@ -1,11 +1,10 @@
 import { createServer } from 'http';
-
+import { error, PATH_ERROR } from './controllers/response';
 import isValidUrl from './utils/isValidUrl';
 import isValidUrlById from './utils/isValidUrlById';
-
 import get from './controllers/get';
+import put from './controllers/put';
 import post from './controllers/post';
-import { error, PATH_ERROR } from './controllers/response';
 
 import 'dotenv/config';
 
@@ -25,9 +24,9 @@ const server = createServer((req, res) => {
       post(req, res);
       break;
 
-    // case method === 'PUT' && isValidUrlById(url!):
-    //   patchUser(req, res);
-    //   break;
+    case method === 'PUT' && isValidUrlById(url!):
+      put(req, res);
+      break;
 
     // case method === 'DELETE' && isValidUrlById(url!):
     //   deleteUser(url!, res);
