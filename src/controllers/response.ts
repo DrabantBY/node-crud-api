@@ -34,11 +34,8 @@ export const success = (
   data?: UserType | UserType[]
 ) => {
   res.writeHead(code, RES_HEADER);
-  if (data) {
-    res.end(JSON.stringify(data));
-  } else {
-    res.end();
-  }
+  if (data) res.end(JSON.stringify(data));
+  else res.end();
 };
 
 export const error = (res: ServerResponse, errorData: ErrorType) => {

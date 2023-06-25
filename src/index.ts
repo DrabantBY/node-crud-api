@@ -5,7 +5,7 @@ import isValidUrlById from './utils/isValidUrlById';
 import get from './controllers/get';
 import put from './controllers/put';
 import post from './controllers/post';
-
+import remove from './controllers/remove';
 import 'dotenv/config';
 
 const server = createServer((req, res) => {
@@ -28,9 +28,9 @@ const server = createServer((req, res) => {
       put(req, res);
       break;
 
-    // case method === 'DELETE' && isValidUrlById(url!):
-    //   deleteUser(url!, res);
-    //   break;
+    case method === 'DELETE' && isValidUrlById(url!):
+      remove(res, url!);
+      break;
 
     default:
       error(res, PATH_ERROR);

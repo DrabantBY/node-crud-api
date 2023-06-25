@@ -16,23 +16,19 @@ const isValidHobbies = ([key, value]: [BodyKeyType, BodyValType]) =>
 
 const isValidSize = (method: 'put' | 'post', body: Partial<UserBodyType>) => {
   const size = Object.keys(body).length;
-
   return method === 'put' ? size >= 1 && size <= 3 : size === 3;
 };
 
 const checkKeyVal = (body: Partial<UserBodyType>) => {
   const arr = Object.entries(body) as [BodyKeyType, BodyValType][];
-
   for (let i = 0; i < arr.length; i++) {
     if (
       !isValidName(arr[i]!) &&
       !isValidAge(arr[i]!) &&
       !isValidHobbies(arr[i]!)
-    ) {
+    )
       return false;
-    }
   }
-
   return true;
 };
 
@@ -41,6 +37,5 @@ export const isValidBody = (
   body: Partial<UserBodyType>
 ) => {
   const flag = isValidSize(method, body);
-
   return flag ? checkKeyVal(body) : flag;
 };
