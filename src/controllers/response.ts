@@ -1,31 +1,32 @@
 import { ServerResponse } from 'http';
 import { ErrorType, UserType } from '../../types';
+import 'dotenv/config';
 
 const RES_HEADER = { 'Content-Type': 'application/json' };
 
 export const PATH_ERROR = {
   code: 404,
-  message: "such path doesn't exist",
+  message: process.env.PATH_ERROR_MESSAGE ?? '',
 };
 
 export const USER_ID_ERROR = {
   code: 400,
-  message: 'such user Id is invalid (not uuid)',
+  message: process.env.USER_ID_ERROR_MESSAGE ?? '',
 };
 
 export const BODY_ERROR = {
   code: 400,
-  message: "request body doesn't contain required fields",
+  message: process.env.BODY_ERROR_MESSAGE ?? '',
 };
 
 export const USER_ERROR = {
   code: 404,
-  message: "such user Id doesn't exist",
+  message: process.env.USER_ERROR_MESSAGE ?? '',
 };
 
 export const SERVER_ERROR = {
   code: 500,
-  message: 'an internal server error has occurred',
+  message: process.env.SERVER_ERROR_MESSAGE ?? '',
 };
 
 export const success = (
