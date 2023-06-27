@@ -2,11 +2,12 @@
   "name": "crud-api",
   "version": "1.0.0",
   "description": "rs-school node.js task",
-  "main": "index.js",
+  "main": "index.ts",
   "type": "module",
   "scripts": {
     "start:dev": "nodemon",
-    "start:prod": "tsc && node dist/index.js"
+    "start:prod": "tsc && node dist/index.js",
+    "test": "jest .test/app.test.ts"
   },
   "author": "drabantby",
   "license": "ISC",

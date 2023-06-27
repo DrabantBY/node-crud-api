@@ -7,10 +7,10 @@ import {
   BODY_ERROR,
   SERVER_ERROR,
   USER_ERROR,
-} from './response.js';
-import { isValidBody } from '../utils/isValidBody.js';
+} from './response';
+import { isValidBody } from '../utils/isValidBody';
 import { UserBodyType } from '../../types';
-import users from '../db.js';
+import users from '../db';
 
 const changeUser = (id: string, data: string) => {
   const body = JSON.parse(data) as UserBodyType;
