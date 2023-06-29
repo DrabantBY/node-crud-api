@@ -15,6 +15,7 @@ const changeErrorData = (
 };
 
 let userId: string;
+const INVALID_URL = '/invalidUrl';
 const user = { username: 'Eugene', age: 35, hobbies: ['js', 'ts'] };
 const data = { username: 'Simon', age: 25, hobbies: ['soccer'] };
 const invalidUser = { username: 'Alex', age: 45, status: 'developer' };
@@ -28,14 +29,16 @@ afterAll(() => {
 
 describe('return success responses', () => {
   it('return an empty array by GET request', async () => {
-    const { statusCode, body } = await app.get('/api/users');
+    const { statusCode, body } = await app.get(process.env.BASE_URL!);
 
     expect(statusCode).toBe(200);
     expect(body).toHaveLength(0);
   });
 
   it('return new user by POST request', async () => {
-    const { statusCode, body } = await app.post('/api/users').send(user);
+    const { statusCode, body } = await app
+      .post(process.env.BASE_URL!)
+      .send(user);
 
     expect(statusCode).toBe(201);
     expect(body.username).toBe('Eugene');
@@ -47,7 +50,9 @@ describe('return success responses', () => {
   });
 
   it('return new user by GET request by id', async () => {
-    const { statusCode, body } = await app.get(`/api/users/${userId}`);
+    const { statusCode, body } = await app.get(
+      process.env.BASE_URL + '/' + userId
+    );
 
     expect(statusCode).toBe(200);
     expect(body.username).toBe('Eugene');
@@ -57,7 +62,7 @@ describe('return success responses', () => {
   });
 
   it('return users array by GET request', async () => {
-    const { statusCode, body } = await app.get('/api/users');
+    const { statusCode, body } = await app.get(process.env.BASE_URL!);
 
     expect(statusCode).toBe(200);
     expect(body).toHaveLength(1);
@@ -68,7 +73,7 @@ describe('return success responses', () => {
 
   it('update user by PUT request', async () => {
     const { statusCode, body } = await app
-      .put(`/api/users/${userId}`)
+      .put(process.env.BASE_URL + '/' + userId)
       .send(data);
 
     expect(statusCode).toBe(200);
@@ -79,7 +84,9 @@ describe('return success responses', () => {
   });
 
   it('return updated user by GET request by id', async () => {
-    const { statusCode, body } = await app.get(`/api/users/${userId}`);
+    const { statusCode, body } = await app.get(
+      process.env.BASE_URL + '/' + userId
+    );
 
     expect(statusCode).toBe(200);
     expect(body.username).toBe('Simon');
@@ -89,7 +96,7 @@ describe('return success responses', () => {
   });
 
   it('return updated users array by GET request', async () => {
-    const { statusCode, body } = await app.get('/api/users');
+    const { statusCode, body } = await app.get(process.env.BASE_URL!);
 
     expect(statusCode).toBe(200);
     expect(body).toHaveLength(1);
@@ -99,14 +106,16 @@ describe('return success responses', () => {
   });
 
   it('remove user by DELETE request', async () => {
-    const { statusCode, body } = await app.delete(`/api/users/${userId}`);
+    const { statusCode, body } = await app.delete(
+      process.env.BASE_URL + '/' + userId
+    );
 
     expect(statusCode).toBe(204);
     expect(body).toBeUndefined;
   });
 
   it('return an empty array by GET request', async () => {
-    const { statusCode, body } = await app.get('/api/users');
+    const { statusCode, body } = await app.get(process.env.BASE_URL!);
 
     expect(statusCode).toBe(200);
     expect(body).toHaveLength(0);
@@ -115,7 +124,7 @@ describe('return success responses', () => {
 
 describe('return error 404 by invalid url', () => {
   it('return error by GET request', async () => {
-    const { statusCode, body } = await app.get('/invalid_url/');
+    const { statusCode, body } = await app.get(INVALID_URL);
 
     changeErrorData(
       statusCode,
@@ -126,7 +135,7 @@ describe('return error 404 by invalid url', () => {
   });
 
   it('return error by POST request', async () => {
-    const { statusCode, body } = await app.post('/invalid_url/').send(user);
+    const { statusCode, body } = await app.post(INVALID_URL).send(user);
 
     changeErrorData(
       statusCode,
@@ -137,7 +146,7 @@ describe('return error 404 by invalid url', () => {
   });
 
   it('return error by PUT request', async () => {
-    const { statusCode, body } = await app.put('/invalid_url/').send(data);
+    const { statusCode, body } = await app.put(INVALID_URL).send(data);
 
     changeErrorData(
       statusCode,
@@ -148,7 +157,7 @@ describe('return error 404 by invalid url', () => {
   });
 
   it('return error by DELETE request', async () => {
-    const { statusCode, body } = await app.delete('/invalid_url/');
+    const { statusCode, body } = await app.delete(INVALID_URL);
 
     changeErrorData(
       statusCode,
@@ -161,7 +170,9 @@ describe('return error 404 by invalid url', () => {
 
 describe('return error 400 by invalid id', () => {
   it('return error by GET request', async () => {
-    const { statusCode, body } = await app.get('/api/users/invalid_uuid');
+    const { statusCode, body } = await app.get(
+      process.env.BASE_URL + INVALID_URL
+    );
 
     changeErrorData(
       statusCode,
@@ -173,7 +184,7 @@ describe('return error 400 by invalid id', () => {
 
   it('return error by PUT request', async () => {
     const { statusCode, body } = await app
-      .put('/api/users/invalid_uuid')
+      .put(process.env.BASE_URL + INVALID_URL)
       .send(data);
 
     changeErrorData(
@@ -185,7 +196,9 @@ describe('return error 400 by invalid id', () => {
   });
 
   it('return error by DELETE request', async () => {
-    const { statusCode, body } = await app.delete('/api/users/invalid_uuid');
+    const { statusCode, body } = await app.delete(
+      process.env.BASE_URL + INVALID_URL
+    );
 
     changeErrorData(
       statusCode,
@@ -199,7 +212,7 @@ describe('return error 400 by invalid id', () => {
 describe('return error 400 by invalid request body', () => {
   it('return error by POST request', async () => {
     const { statusCode, body } = await app
-      .post('/api/users/')
+      .post(process.env.BASE_URL!)
       .send(invalidUser);
 
     changeErrorData(
@@ -211,12 +224,12 @@ describe('return error 400 by invalid request body', () => {
   });
 
   it('return error by PUT request', async () => {
-    const response = await app.post('/api/users/').send(user);
+    const response = await app.post(process.env.BASE_URL!).send(user);
 
     userId = response.body.id;
 
     const { statusCode, body } = await app
-      .put(`/api/users/${userId}`)
+      .put(process.env.BASE_URL + '/' + userId)
       .send(invalidData);
 
     changeErrorData(
@@ -231,7 +244,7 @@ describe('return error 400 by invalid request body', () => {
 describe('return internal error', () => {
   it('return error 500 by POST request', async () => {
     const { statusCode, body } = await app
-      .post('/api/users/')
+      .post(process.env.BASE_URL!)
       .send(invalidJSON);
 
     changeErrorData(
@@ -243,12 +256,12 @@ describe('return internal error', () => {
   });
 
   it('return error 500 by PUT request', async () => {
-    const response = await app.post('/api/users/').send(user);
+    const response = await app.post(process.env.BASE_URL!).send(user);
 
     userId = response.body.id;
 
     const { statusCode, body } = await app
-      .put(`/api/users/${userId}`)
+      .put(process.env.BASE_URL + '/' + userId)
       .send(invalidJSON);
 
     changeErrorData(
