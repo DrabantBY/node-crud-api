@@ -20,7 +20,6 @@ const user = { username: 'Eugene', age: 35, hobbies: ['js', 'ts'] };
 const data = { username: 'Simon', age: 25, hobbies: ['soccer'] };
 const invalidUser = { username: 'Alex', age: 45, status: 'developer' };
 const invalidData = { username: 'Michael', age: 0 };
-
 const invalidJSON = '{ "username" "John" age: 30 }';
 
 afterAll(() => {

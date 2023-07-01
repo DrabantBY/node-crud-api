@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start:dev": "nodemon",
-    "start:prod": "tsc && node dist/index.js",
+    "start:prod": "tsc && node --es-module-specifier-resolution=node dist/index.js",
+    "start:multi": "npm run start:prod cluster",
     "test": "jest .test/app.test.ts"
   },
   "author": "drabantby",
