@@ -1,0 +1,32 @@
+{
+  "name": "node-crud-api",
+  "version": "1.0.0",
+  "description": "rsschool nodejs assignment",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts"
+  },
+  "homepage": "https://github.com/DrabantBY/node-crud-api#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DrabantBY/node-crud-api.git"
+  },
+  "keywords": [
+    "nodejs",
+    "fastify",
+    "typescript",
+    "rsschool",
+    "assignment"
+  ],
+  "author": "DrabantBY",
+  "license": "ISC",
+  "dependencies": {
+    "fastify": "^5.8.5"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.3",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3"
+  }
+}
