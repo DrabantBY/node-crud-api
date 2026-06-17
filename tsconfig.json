@@ -15,6 +15,11 @@
     "noUncheckedIndexedAccess": true,
     "declaration": false,
     "sourceMap": true,
+    "paths": {
+      "@models": ["./src/models/index.ts"],
+      "@routes": ["./src/routes/index.ts"],
+      "@services": ["./src/services/index.ts"],
+    },
   },
   "include": ["src/**/*.ts"],
 }

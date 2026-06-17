@@ -1,5 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import Fastify from "fastify";
+import { productRoutes } from "@routes";
+import { RespondService, ProductService } from "@services";
 
 process.loadEnvFile();
 
@@ -7,12 +9,10 @@ const server: FastifyInstance = Fastify({
   logger: true,
 });
 
-// Declare a route
-server.get("/", async function handler(request, reply) {
-  return { hello: "world" };
-});
+server.decorate("state", new ProductService());
+server.decorate("reply", new RespondService());
+server.register(productRoutes, { prefix: process.env.BASE_URL });
 
-// Run the server!
 try {
   await server.listen({ port: Number(process.env.PORT) });
 } catch (err) {
