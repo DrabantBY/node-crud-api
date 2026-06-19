@@ -9,11 +9,3 @@ export interface ProductBody {
 export interface Product extends ProductBody {
   id: string;
 }
-
-export interface ProductDbState {
-  fetchAll(): Promise<Product[]>;
-  fetchOne(id: string): Promise<Product | null>;
-  insertOne(body: ProductBody): Promise<Product>;
-  upsertOne(id: string, body: Partial<ProductBody>): Promise<Product | null>;
-  deleteOne(id: string): Promise<boolean>;
-}

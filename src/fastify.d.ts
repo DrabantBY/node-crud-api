@@ -1,9 +1,8 @@
-import type { ProductDbState, RespondRequest } from "@models";
+import type { ProductController } from "@controllers";
 
 declare module "fastify" {
   interface FastifyInstance {
-    state: ProductDbState;
-    reply: RespondRequest;
+    controller: ProductController;
   }
 }
 

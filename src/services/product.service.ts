@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
-import type { Product, ProductBody, ProductDbState } from "@models";
+import type { Product, ProductBody } from "@models";
 
-export class ProductService implements ProductDbState {
+export class ProductService {
   readonly #state = new Map<string, Product>();
 
   async fetchAll(): Promise<Product[]> {
@@ -18,7 +18,7 @@ export class ProductService implements ProductDbState {
     return product;
   }
 
-  async upsertOne(
+  async updateOne(
     id: string,
     body: Partial<ProductBody>,
   ): Promise<Product | null> {
