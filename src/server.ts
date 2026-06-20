@@ -1,8 +1,8 @@
-import type { FastifyInstance } from "fastify";
-import Fastify from "fastify";
+import { ProductController } from "@controllers";
 import { productRoutes } from "@routes";
 import { ProductService, RespondService } from "@services";
-import { ProductController } from "@controllers";
+import type { FastifyInstance } from "fastify";
+import Fastify from "fastify";
 
 process.loadEnvFile();
 

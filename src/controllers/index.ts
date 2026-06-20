@@ -1,1 +1,1 @@
-export * from "./product.controller.js";
+export * from "./product.controller";

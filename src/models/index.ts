@@ -1,2 +1,2 @@
-export * from "./product.model.js";
-export * from "./request.model.js";
+export * from "./product.model";
+export * from "./request.model";

@@ -1,4 +1,4 @@
-import type { ProductBody } from "./product.model.js";
+import type { ProductBody } from "./product.model";
 
 export interface ParamsId {
   Params: Record<"id", string>;

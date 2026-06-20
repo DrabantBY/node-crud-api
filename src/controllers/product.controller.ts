@@ -1,4 +1,3 @@
-import type { FastifyReply, FastifyRequest } from "fastify";
 import type { ParamsBody, ParamsId, RequestParams } from "@models";
 import type { ProductService, RespondService } from "@services";
 import {
@@ -6,6 +5,7 @@ import {
   productPartValidator,
   productUUIDValidator,
 } from "@validators";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 export class ProductController {
   readonly #state: ProductService;

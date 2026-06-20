@@ -1,1 +1,1 @@
-export * from "./product.route.js";
+export * from "./product.route";
