@@ -2,8 +2,8 @@ import type { FastifyReply } from "fastify";
 
 export class RespondService {
   readonly #message: Record<number, string> = {
-    404: "An entity with this id doesn't exist",
-    400: "The passed entity id doesn't match UUID",
+    404: "A product with this id doesn't exist",
+    400: "Passed product id doesn't match UUID",
   };
 
   sendError(
