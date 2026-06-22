@@ -1,8 +1,8 @@
 import { deepEqual, equal } from "node:assert/strict";
 import { randomUUID } from "node:crypto";
-import { afterEach, beforeEach, describe, it } from "node:test";
+import { after, before, describe, it } from "node:test";
 import type { Product } from "@models";
-import type { FastifyInstance } from "fastify";
+import request from "supertest";
 import { createServerInstance } from "../app";
 
 const BASE_URL = "/api/products";
@@ -17,166 +17,145 @@ const PRODUCT_BODY = {
 
 const PRODUCT_PART = { price: 1000, inStock: false };
 
-let app: FastifyInstance;
-
-beforeEach(async () => {
-  app = createServerInstance({ logger: false });
-  await app.ready();
-});
-
-afterEach(async () => {
-  await app.close();
-});
+const useServer = () => {
+  const app = createServerInstance({ logger: false });
+  before(() => app.ready());
+  after(() => app.close());
+  return () => request(app.server);
+};
 
 describe("Test success CRUD operations", () => {
-  it("should return success response for request methods", async () => {
-    const postRes = await app.inject({
-      method: "POST",
-      url: BASE_URL,
-      payload: PRODUCT_BODY,
-    });
-    equal(postRes.statusCode, 201);
-    const PRODUCT_FULL = postRes.json<Product>();
+  let product: Product;
+  const req = useServer();
 
-    const { id } = PRODUCT_FULL;
-    const url = `${BASE_URL}/${id}`;
+  const testFetchList = async (expect: Product[]) => {
+    const { status, body } = await req().get(BASE_URL);
+    equal(status, 200);
+    deepEqual(body, expect);
+  };
 
-    deepEqual(PRODUCT_FULL, { id, ...PRODUCT_BODY });
+  it("should return success response for GET request method", () =>
+    testFetchList([]));
 
-    const getRes = await app.inject({ method: "GET", url });
-    equal(getRes.statusCode, 200);
-    deepEqual(getRes.json<Product>(), PRODUCT_FULL);
+  it("should return success response for POST request method", async () => {
+    const { status, body } = await req().post(BASE_URL).send(PRODUCT_BODY);
+    equal(status, 201);
+    deepEqual(body, { ...PRODUCT_BODY, id: body.id });
+    product = body;
+  });
 
-    const updateRes = await app.inject({
-      method: "PUT",
-      url,
-      payload: PRODUCT_PART,
-    });
-    equal(updateRes.statusCode, 200);
-    deepEqual(updateRes.json<Product>(), {
-      ...PRODUCT_FULL,
-      ...PRODUCT_PART,
-    });
+  it("should return success response for GET request method by ID", async () => {
+    const { status, body } = await req().get(`${BASE_URL}/${product.id}`);
+    equal(status, 200);
+    deepEqual(body, product);
+  });
 
-    const getAllRes = await app.inject({
-      method: "GET",
-      url: BASE_URL,
-    });
-    equal(getAllRes.statusCode, 200);
-    deepEqual(getAllRes.json(), [
-      {
-        ...PRODUCT_FULL,
-        ...PRODUCT_PART,
-      },
-    ]);
+  it("should return success response for GET request method", () =>
+    testFetchList([product]));
 
-    const deleteRes = await app.inject({ method: "DELETE", url });
-    equal(deleteRes.statusCode, 204);
-    equal(deleteRes.body, "");
+  it("should return success response for PUT request method", async () => {
+    const { status, body } = await req()
+      .put(`${BASE_URL}/${product.id}`)
+      .send(PRODUCT_PART);
+    equal(status, 200);
+    deepEqual(body, { ...product, ...PRODUCT_PART });
+    product = body;
+  });
 
-    const getResEmpty = await app.inject({
-      method: "GET",
-      url: BASE_URL,
-    });
-    equal(getResEmpty.statusCode, 200);
-    deepEqual(getResEmpty.json(), []);
+  it("should return success response for GET request method by ID", async () => {
+    const { status, body } = await req().get(`${BASE_URL}/${product.id}`);
+    equal(status, 200);
+    deepEqual(body, product);
+  });
+
+  it("should return success response for GET request method", () =>
+    testFetchList([product]));
+
+  it("should return success response for DELETE request method", async () => {
+    const { status, body } = await req().delete(`${BASE_URL}/${product.id}`);
+    equal(status, 204);
+    deepEqual(body, {});
+  });
+
+  it("should return success response for GET request method", () =>
+    testFetchList([]));
+});
+
+describe("Test errors for invalid route id param (non-UUID)", () => {
+  const url = `${BASE_URL}/not-an-uuid`;
+  const req = useServer();
+
+  it("should throw an error 400 for GET request method", () => {
+    req().get(url).expect(400);
+  });
+
+  it("should throw an error 400 for PUT request method", () => {
+    req().put(url).send(PRODUCT_PART).expect(400);
+  });
+
+  it("should throw an error 400 for DELETE request method", () => {
+    req().delete(url).expect(400);
   });
 });
 
-describe("Test validation errors", () => {
-  it("should throw an error 400 for an invalid request id (non-UUID)", async () => {
-    const url = `${BASE_URL}/not-a-uuid`;
+describe("Test errors for POST request method with invalid body", () => {
+  const req = useServer();
 
-    const getRes = await app.inject({ method: "GET", url });
-    equal(getRes.statusCode, 400);
-
-    const putRes = await app.inject({
-      method: "PUT",
-      url,
-      payload: PRODUCT_PART,
-    });
-    equal(putRes.statusCode, 400);
-
-    const deleteRes = await app.inject({ method: "DELETE", url });
-    equal(deleteRes.statusCode, 400);
+  it("should throw an error 400 for a body without required fields", () => {
+    req().post(BASE_URL).send(PRODUCT_PART).expect(400);
   });
 
-  it("should throw an error 400 for an invalid POST request body", async () => {
-    const part = await app.inject({
-      method: "POST",
-      url: BASE_URL,
-      payload: PRODUCT_PART,
-    });
-    equal(part.statusCode, 400);
-
-    const extra = await app.inject({
-      method: "POST",
-      url: BASE_URL,
-      payload: { ...PRODUCT_BODY, id: randomUUID() },
-    });
-    equal(extra.statusCode, 400);
-
-    const type = await app.inject({
-      method: "POST",
-      url: BASE_URL,
-      payload: { ...PRODUCT_BODY, isStock: "yes" },
-    });
-    equal(type.statusCode, 400);
-
-    const price = await app.inject({
-      method: "POST",
-      url: BASE_URL,
-      payload: { ...PRODUCT_BODY, price: 0 },
-    });
-    equal(price.statusCode, 400);
+  it("should throw an error 400 for a body with some extra fields", () => {
+    req()
+      .post(BASE_URL)
+      .send({ ...PRODUCT_BODY, id: randomUUID() })
+      .expect(400);
   });
 
-  it("should throw an error 400 for an invalid PUT request body", async () => {
-    const url = `${BASE_URL}/${randomUUID()}`;
+  it("should throw an error 400 for a body with incorrect field type", () => {
+    req()
+      .post(BASE_URL)
+      .send({ ...PRODUCT_BODY, isStock: "yes" })
+      .expect(400);
+  });
 
-    const empty = await app.inject({
-      method: "PUT",
-      url,
-      payload: {},
-    });
-    equal(empty.statusCode, 400);
+  it("should throw an error 400 for a body with incorrect price field", () => {
+    req()
+      .post(BASE_URL)
+      .send({ ...PRODUCT_BODY, price: 0 })
+      .expect(400);
+  });
+});
 
-    const unknown = await app.inject({
-      method: "PUT",
-      url,
-      payload: { color: "black" },
-    });
-    equal(unknown.statusCode, 400);
+describe("Test errors for PUT request method with invalid body", () => {
+  const url = `${BASE_URL}/${randomUUID()}`;
+  const req = useServer();
 
-    const price = await app.inject({
-      method: "PUT",
-      url,
-      payload: { price: -5 },
-    });
-    equal(price.statusCode, 400);
+  it("should throw an error 400 for a body without any fields", () => {
+    req().put(url).send({}).expect(400);
+  });
+
+  it("should throw an error 400 for a body with incorrect field", () => {
+    req().put(url).send({ color: "black" }).expect(400);
+  });
+
+  it("should throw an error 400 for a body with incorrect field type", () => {
+    req().put(url).send({ isStock: "yes" }).expect(400);
+  });
+
+  it("should throw an error 400 for a body with incorrect price field", () => {
+    req().put(url).send({ price: 0 }).expect(400);
   });
 });
 
 describe("Test not found errors", () => {
-  it("should throw an error 404 for non-existent request UUID", async () => {
-    const url = `${BASE_URL}/${randomUUID()}`;
+  const req = useServer();
 
-    const getRes = await app.inject({ method: "GET", url });
-    equal(getRes.statusCode, 404);
-
-    const putRes = await app.inject({
-      method: "PUT",
-      url,
-      payload: PRODUCT_PART,
-    });
-    equal(putRes.statusCode, 404);
-
-    const deleteRes = await app.inject({ method: "DELETE", url });
-    equal(deleteRes.statusCode, 404);
+  it("should throw an error 404 for non-existent route", () => {
+    req().get("/non-existent-route").expect(404);
   });
 
-  it("should throw an error 404 for an unknown route", async () => {
-    const res = await app.inject({ method: "GET", url: "/api/unknown" });
-    equal(res.statusCode, 404);
+  it("should throw an error 404 for non-existent UUID route param", () => {
+    req().delete(`${BASE_URL}/${randomUUID()}`).expect(404);
   });
 });
