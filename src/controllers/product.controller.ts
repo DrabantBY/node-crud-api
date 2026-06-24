@@ -17,7 +17,7 @@ export class ProductController {
   }
 
   fetchAll = async (_: FastifyRequest, res: FastifyReply) => {
-    const products = await this.#state.fetchAll();
+    const products = this.#state.fetchAll();
     return this.#reply.sendSuccess(res, 200, products);
   };
 
@@ -28,7 +28,7 @@ export class ProductController {
     if (!productUUIDValidator(params.id))
       return this.#reply.sendError(res, 400);
 
-    const product = await this.#state.fetchOne(params.id);
+    const product = this.#state.fetchOne(params.id);
 
     return product
       ? this.#reply.sendSuccess(res, 200, product)
@@ -42,7 +42,7 @@ export class ProductController {
     if (!productBodyValidator(body) || body.price <= 0)
       return this.#reply.sendError(res, 400, "Request body has invalid field");
 
-    const product = await this.#state.insertOne(body);
+    const product = this.#state.insertOne(body);
     return this.#reply.sendSuccess(res, 201, product);
   };
 
@@ -53,10 +53,13 @@ export class ProductController {
     if (!productUUIDValidator(params.id))
       return this.#reply.sendError(res, 400);
 
-    if (!productPartValidator(body) || (body.price && body.price <= 0))
+    if (
+      !productPartValidator(body) ||
+      (body.price !== undefined && body.price <= 0)
+    )
       return this.#reply.sendError(res, 400, "Request body has invalid field");
 
-    const product = await this.#state.updateOne(params.id, body);
+    const product = this.#state.updateOne(params.id, body);
 
     return product
       ? this.#reply.sendSuccess(res, 200, product)
@@ -70,7 +73,7 @@ export class ProductController {
     if (!productUUIDValidator(params.id))
       return this.#reply.sendError(res, 400);
 
-    const success = await this.#state.deleteOne(params.id);
+    const success = this.#state.deleteOne(params.id);
 
     return success
       ? this.#reply.sendSuccess(res, 204)

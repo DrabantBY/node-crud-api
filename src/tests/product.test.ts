@@ -26,10 +26,10 @@ const useServer = () => {
 
 describe("Test success CRUD operations", () => {
   let product: Product;
-  const req = useServer();
+  const server = useServer();
 
   const testFetchList = async (expect: Product[]) => {
-    const { status, body } = await req().get(BASE_URL);
+    const { status, body } = await server().get(BASE_URL);
     equal(status, 200);
     deepEqual(body, expect);
   };
@@ -38,14 +38,14 @@ describe("Test success CRUD operations", () => {
     testFetchList([]));
 
   it("should return success response for POST request method", async () => {
-    const { status, body } = await req().post(BASE_URL).send(PRODUCT_BODY);
+    const { status, body } = await server().post(BASE_URL).send(PRODUCT_BODY);
     equal(status, 201);
     deepEqual(body, { ...PRODUCT_BODY, id: body.id });
     product = body;
   });
 
   it("should return success response for GET request method by ID", async () => {
-    const { status, body } = await req().get(`${BASE_URL}/${product.id}`);
+    const { status, body } = await server().get(`${BASE_URL}/${product.id}`);
     equal(status, 200);
     deepEqual(body, product);
   });
@@ -54,7 +54,7 @@ describe("Test success CRUD operations", () => {
     testFetchList([product]));
 
   it("should return success response for PUT request method", async () => {
-    const { status, body } = await req()
+    const { status, body } = await server()
       .put(`${BASE_URL}/${product.id}`)
       .send(PRODUCT_PART);
     equal(status, 200);
@@ -63,7 +63,7 @@ describe("Test success CRUD operations", () => {
   });
 
   it("should return success response for GET request method by ID", async () => {
-    const { status, body } = await req().get(`${BASE_URL}/${product.id}`);
+    const { status, body } = await server().get(`${BASE_URL}/${product.id}`);
     equal(status, 200);
     deepEqual(body, product);
   });
@@ -72,7 +72,7 @@ describe("Test success CRUD operations", () => {
     testFetchList([product]));
 
   it("should return success response for DELETE request method", async () => {
-    const { status, body } = await req().delete(`${BASE_URL}/${product.id}`);
+    const { status, body } = await server().delete(`${BASE_URL}/${product.id}`);
     equal(status, 204);
     deepEqual(body, {});
   });
@@ -83,44 +83,44 @@ describe("Test success CRUD operations", () => {
 
 describe("Test errors for invalid route id param (non-UUID)", () => {
   const url = `${BASE_URL}/not-an-uuid`;
-  const req = useServer();
+  const server = useServer();
 
   it("should throw an error 400 for GET request method", () => {
-    req().get(url).expect(400);
+    server().get(url).expect(400);
   });
 
   it("should throw an error 400 for PUT request method", () => {
-    req().put(url).send(PRODUCT_PART).expect(400);
+    server().put(url).send(PRODUCT_PART).expect(400);
   });
 
   it("should throw an error 400 for DELETE request method", () => {
-    req().delete(url).expect(400);
+    server().delete(url).expect(400);
   });
 });
 
 describe("Test errors for POST request method with invalid body", () => {
-  const req = useServer();
+  const server = useServer();
 
   it("should throw an error 400 for a body without required fields", () => {
-    req().post(BASE_URL).send(PRODUCT_PART).expect(400);
+    server().post(BASE_URL).send(PRODUCT_PART).expect(400);
   });
 
   it("should throw an error 400 for a body with some extra fields", () => {
-    req()
+    server()
       .post(BASE_URL)
       .send({ ...PRODUCT_BODY, id: randomUUID() })
       .expect(400);
   });
 
   it("should throw an error 400 for a body with incorrect field type", () => {
-    req()
+    server()
       .post(BASE_URL)
       .send({ ...PRODUCT_BODY, isStock: "yes" })
       .expect(400);
   });
 
   it("should throw an error 400 for a body with incorrect price field", () => {
-    req()
+    server()
       .post(BASE_URL)
       .send({ ...PRODUCT_BODY, price: 0 })
       .expect(400);
@@ -129,33 +129,33 @@ describe("Test errors for POST request method with invalid body", () => {
 
 describe("Test errors for PUT request method with invalid body", () => {
   const url = `${BASE_URL}/${randomUUID()}`;
-  const req = useServer();
+  const server = useServer();
 
   it("should throw an error 400 for a body without any fields", () => {
-    req().put(url).send({}).expect(400);
+    server().put(url).send({}).expect(400);
   });
 
   it("should throw an error 400 for a body with incorrect field", () => {
-    req().put(url).send({ color: "black" }).expect(400);
+    server().put(url).send({ color: "black" }).expect(400);
   });
 
   it("should throw an error 400 for a body with incorrect field type", () => {
-    req().put(url).send({ isStock: "yes" }).expect(400);
+    server().put(url).send({ isStock: "yes" }).expect(400);
   });
 
   it("should throw an error 400 for a body with incorrect price field", () => {
-    req().put(url).send({ price: 0 }).expect(400);
+    server().put(url).send({ price: 0 }).expect(400);
   });
 });
 
 describe("Test not found errors", () => {
-  const req = useServer();
+  const server = useServer();
 
   it("should throw an error 404 for non-existent route", () => {
-    req().get("/non-existent-route").expect(404);
+    server().get("/non-existent-route").expect(404);
   });
 
   it("should throw an error 404 for non-existent UUID route param", () => {
-    req().delete(`${BASE_URL}/${randomUUID()}`).expect(404);
+    server().delete(`${BASE_URL}/${randomUUID()}`).expect(404);
   });
 });
